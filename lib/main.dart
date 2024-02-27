@@ -173,6 +173,15 @@ class _AppState extends State<App2> {
   int counter = 0;
   List<int> numbers = [];
 
+  // dispose 사용 예시
+  bool showTitle = true;
+
+  void toggleTitle() {
+    setState(() {
+      showTitle = !showTitle;
+    });
+  }
+
   void onClicked() {
     // setState 를 호출하면 -> 새로운 data가 있다는걸 flutter 에게 알려줌
     // flutter 는 build method 를 호출해서 ui 를 다시 그림
@@ -199,32 +208,97 @@ class _AppState extends State<App2> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        textTheme: const TextTheme(
+          titleLarge: TextStyle(
+            color: Colors.red,
+          ),
+        ),
+      ),
       home: Scaffold(
-          backgroundColor: Colors.yellow[50],
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Click Count!',
-                  style: TextStyle(fontSize: 30),
-                ),
-                Text('$counter', style: const TextStyle(fontSize: 30)),
-                IconButton(
-                  onPressed: onClicked,
-                  icon: const Icon(Icons.add_box_rounded),
-                  iconSize: 40,
-                ),
-                for (var number in numbers) Text('$number'),
-                IconButton(
-                  onPressed: onAdd,
-                  icon: const Icon(Icons.add_box_rounded),
-                  iconSize: 40,
-                  color: Colors.orange,
-                ),
-              ],
-            ),
-          )),
+        backgroundColor: Colors.yellow[50],
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              showTitle ? const MyLargeTitle() : const Text('nothing!'),
+              Text('$counter', style: const TextStyle(fontSize: 30)),
+              IconButton(
+                onPressed: onClicked,
+                icon: const Icon(Icons.add_box_rounded),
+                iconSize: 40,
+              ),
+              for (var number in numbers) Text('$number'),
+              IconButton(
+                onPressed: onAdd,
+                icon: const Icon(Icons.add_box_rounded),
+                iconSize: 40,
+                color: Colors.orange,
+              ),
+              IconButton(
+                onPressed: toggleTitle,
+                icon: const Icon(Icons.remove_red_eye),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// initState, build, dispose 로 lifecycle 관리
+class MyLargeTitle extends StatefulWidget {
+  const MyLargeTitle({
+    super.key,
+  });
+
+  @override
+  State<MyLargeTitle> createState() => _MyLargeTitleState();
+}
+
+class _MyLargeTitleState extends State<MyLargeTitle> {
+  // 1. state 를 단순하게 init 하는 방법
+  int count = 0;
+
+  // 2. state 를 method를 사용해서 init 하는 방법
+  // - 대부분 1번으로 가능
+  // - 2번은 부모요소에 의존하는 data를 초기화 해야할 때 사용
+  // - initState method는 항상 build method 전에 호출됨
+  // - initState method는 딱 한번만 호출됨
+  // - initState method를 사용할 때는 super.initState() 를 꼭 호출해야함
+  @override
+  void initState() {
+    super.initState();
+    print('init');
+  }
+
+// 위젯이 스크린에서 사라질 때 호출됨
+// 위젯이 위젯 트리에서 사라질 때 뭔가 취소하고 싶으면 사용
+// 여기서는 MyTitleWidget 이 사라질 때 이 method가 호출됨
+  @override
+  void dispose() {
+    super.dispose();
+    print('dispose'); // api 업데이트 / 이벤트 리스너 구독 취소 / form 리스너에서 벗어 나고 싶을 때
+  }
+
+  @override
+  // BuildContext 는 widget tree 의 정보를 가지고 있음
+  // 이걸로 매우 먼 부모요소도 접근 가능
+  // 애플리케이션안에서 이 위젯의 위치 정보를 알려줌
+  Widget build(BuildContext context) {
+    print('hello3');
+    return Text(
+      'My Large Title',
+      style: TextStyle(
+          // titleLarge에 color가 없을 수 있기 때문에 color가 꼭 있다고 알려주는 것이 '!'
+          // 또는 color가 없을 수도 있다고 알려주고 있을 때만 사용해라는 의미가 '?'
+          // 둘중에 하나는 사용해야함. 안그러면 에러남
+          // (The property 'color' can't be unconditionally accessed because the receiver can be 'null'.
+          // Try making the access conditional (using '?.') or adding a null check to the target ('!').))
+          fontSize: 30,
+          // 이런 식으로 먼 부모에서 정의한 theme을 쉽게 가져와서 사용 가능
+          color: Theme.of(context).textTheme.titleLarge!.color),
     );
   }
 }
