@@ -6,11 +6,11 @@ import 'package:toonflix/widgets/currency_card.dart';
 // 여러 widget을 합쳐서 ui 를 만들어 내는 것
 // widget 만드는 것 = class 만드는 것
 void main() {
-  runApp(const App());
+  runApp(const App2());
 }
 
 // 여기서 App 은 전체 앱의 root widget, 애플리케이션의 시작점
-// root widget 은 항상 두개의 옵션 중 하나를 return 해야함
+// root widget 은 항상 두개의 옵S션 중 하나를 return 해야함
 // 1. MaterialApp : 구글 -> 확실히 flutter 자체를 구글에서 만들어서 이걸 대부분 사용
 // 2. CupertionApp : 애플
 // 앱이 어떤 모습(느낌)으로 보이길 원하는지 정하는 것
@@ -154,6 +154,75 @@ class App extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          )),
+    );
+  }
+}
+
+// 위젯에 데이터를 저장하고 싶고 실시간으로 업데이트 하고 싶을 때 Stateful widget 을 사용
+// Stateful widget 은 두 부분으로 나뉨 : 1. widget 2. state(data 와 ui 를 넣는 곳)
+class App2 extends StatefulWidget {
+  const App2({super.key});
+
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App2> {
+  int counter = 0;
+  List<int> numbers = [];
+
+  void onClicked() {
+    // setState 를 호출하면 -> 새로운 data가 있다는걸 flutter 에게 알려줌
+    // flutter 는 build method 를 호출해서 ui 를 다시 그림
+    // state는 그렇게 많이 사용되지는 않음
+    setState(() {
+      counter++;
+    });
+
+    // 사실 아래와 같이 setState 안에 counter++ 를 안 넣어도 됨
+    // 왜냐면 상태를 바꾸고 바뀐걸 알려주기만 하면 되기 때문
+    // setState를 호출 할 때 마다 build method 가 다시 실행됨
+    // counter++;
+    // setState(() {});
+  }
+
+  void onAdd() {
+    // numbers.add(numbers.length);
+    // print('numbers: $numbers');
+    setState(() {
+      numbers.add(numbers.length);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+          backgroundColor: Colors.yellow[50],
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Click Count!',
+                  style: TextStyle(fontSize: 30),
+                ),
+                Text('$counter', style: const TextStyle(fontSize: 30)),
+                IconButton(
+                  onPressed: onClicked,
+                  icon: const Icon(Icons.add_box_rounded),
+                  iconSize: 40,
+                ),
+                for (var number in numbers) Text('$number'),
+                IconButton(
+                  onPressed: onAdd,
+                  icon: const Icon(Icons.add_box_rounded),
+                  iconSize: 40,
+                  color: Colors.orange,
+                ),
+              ],
             ),
           )),
     );
