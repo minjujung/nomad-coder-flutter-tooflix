@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:toonflix/screens/home_screen.dart';
+import 'package:toonflix/services/api_service.dart';
 
-// 많은 widget을 블럭 처럼 사용할 수 있음
-// 여러 widget을 합쳐서 ui 를 만들어 내는 것
-// widget 만드는 것 = class 만드는 것
 void main() {
+  ApiService().getTodayToons();
   runApp(const App());
 }
 
@@ -14,8 +14,8 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Container(),
+    return const MaterialApp(
+      home: HomeScreen(),
     );
   }
 }
