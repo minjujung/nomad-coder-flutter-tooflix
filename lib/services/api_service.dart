@@ -6,10 +6,12 @@ import 'package:toonflix/models/webtoon_model.dart';
 // final: 런타임에 값 할당 받을 수 있음 & 값이 할당되면 변경 불가능
 // const: 컴파일 타임에 값 결정, 런타임에서 값 변경 불가능
 class ApiService {
-  final String baseUrl = 'https://webtoon-crawler.nomadcoders.workers.dev';
-  final String today = 'today';
+  static const String baseUrl =
+      'https://webtoon-crawler.nomadcoders.workers.dev';
+  static const String today = 'today';
 
-  Future<List<WebtoonModel>> getTodayToons() async {
+  // 변하는 state 가 없는 경우에는 static으로 선언
+  static Future<List<WebtoonModel>> getTodayToons() async {
     List<WebtoonModel> webtoonInstances = [];
 
     //대부분의 HTTP 클라이언트 라이브러리들은 Uri 객체를 요구
@@ -34,7 +36,6 @@ class ApiService {
         final toon = WebtoonModel.fromJson(webtoon);
         webtoonInstances.add(toon);
       }
-
       return webtoonInstances;
     }
     throw Error();
